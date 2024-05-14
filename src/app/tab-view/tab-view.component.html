@@ -1,0 +1,12 @@
+<ng-container *ngIf="tabs.length > 0">
+    <section class="tab-headers">
+        <div *ngFor="let tab of tabs" class="item" [ngClass]="{active: tab == activeComponent}">
+            <span (click)="activateTab(tab)">{{tab.tabName}} ({{tab.zipcode}})</span>
+            <span class="close" (click)="removeTab(tab.zipcode)">X</span>
+        </div>
+    </section>
+
+    <section class="tab-content">
+        <ng-container *ngTemplateOutlet="activeComponent?.contentRef"></ng-container>
+    </section>
+</ng-container>

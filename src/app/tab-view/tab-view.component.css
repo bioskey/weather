@@ -1,0 +1,31 @@
+.tab-headers {
+    display: flex;
+    margin-bottom: -1px;
+}
+
+.tab-content {
+    padding: 20px 20px 0 20px;
+    border: 1px solid;
+}
+
+.item {
+    display: flex;
+    align-items: center;
+    background-color: #337ab7;
+    border: 1px solid black;
+    font-size: 15px;
+    margin-right: 8px;
+    padding: 5px 15px;
+    color: white;
+    cursor: pointer;
+}
+
+.item.active {
+    background-color: white;
+    border-bottom: 1px solid white;
+    color: black;
+}
+
+.close {
+    margin-left: 12px;
+}

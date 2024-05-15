@@ -1,11 +1,12 @@
 import { Injectable, Signal, signal } from '@angular/core';
-import { Observable, of, zip } from 'rxjs';
+import { Observable, of } from 'rxjs';
 
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { CurrentConditions } from './current-conditions/current-conditions.type';
 import { ConditionsAndZip } from './conditions-and-zip.type';
 import { Forecast } from './forecasts-list/forecast.type';
 import { StorageService } from './storage.service';
+import { LOCATIONS } from './location.service';
 
 @Injectable()
 export class WeatherService {
@@ -29,22 +30,35 @@ export class WeatherService {
 
     // Here we make a request to get the current conditions data from the API. Note the use of backticks and an expression to insert the zipcode
     this.http.get<CurrentConditions>(`${WeatherService.URL}/weather?zip=${zipcode},us&units=imperial&APPID=${WeatherService.APPID}`)
-      .subscribe(data => this.currentConditions.update(conditions => {
-        this.storageService.setItem(zipcode + '-data', data);
-        return this.searchZipcode(zipcode, conditions) ? conditions : [...conditions, { zip: zipcode, data }];
-      }));
+      .subscribe(
+        (data) => {
+          this.storageService.setItem(zipcode + '-data', data);
+          this.currentConditions.update(conditions => {
+            return this.searchZipcode(zipcode, conditions) ? conditions : [...conditions, { zip: zipcode, data }];
+          })
+        },
+        (error) => {
+          this.handleError(error, zipcode);
+        }
+      );
   }
 
-  // Return true if key (zipcode) is found in arry of conditions
-  searchZipcode(zipcode: string, conditions: ConditionsAndZip[]): boolean {
-    let isAlreadyPresent = false;
-    for (let i in conditions) {
-      if (conditions[i].zip == zipcode) {
-        isAlreadyPresent = true;
-        break;
+  // Remove zipcode from localstorage when 404 not found
+  handleError(err: HttpErrorResponse, zipcode: string) {
+    if (err.error.cod == 404) {
+      let locations = this.storageService.getItem(LOCATIONS);
+      let index = locations ? locations.indexOf(zipcode) : -1;
+
+      if (index !== -1) {
+        locations.splice(index, 1);
+        this.storageService.setItem(LOCATIONS, locations);
       }
     }
-    return isAlreadyPresent;
+  }
+
+  // Return true if key (zipcode) is found in arry of conditions zip
+  searchZipcode(zipcode: string, conditions: ConditionsAndZip[]): boolean {
+    return conditions.map(condition => condition.zip).indexOf(zipcode) !== -1;
   }
 
   removeCurrentConditions(zipcode: string) {

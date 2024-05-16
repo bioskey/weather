@@ -22,7 +22,9 @@ export class LocationService {
   }
 
   getLocationsFromStorage(): void {
-    this._locations = this.storageService.getItem(LOCATIONS) ?? this._locations;
+    let locations = this.storageService.getItem(LOCATIONS);
+    if (locations)
+      this._locations = JSON.parse(locations);
 
     for (let loc of this._locations)
       this.locationChange.next({ zipcode: loc, toRemove: false });

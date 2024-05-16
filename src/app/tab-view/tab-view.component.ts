@@ -24,6 +24,7 @@ export class TabViewComponent implements AfterContentChecked {
 
     removeTab(zipcode: string): void {
         this.locationService.removeLocation(zipcode);
-        this.activeComponent = this.tabs.filter(tab => tab.zipcode !== zipcode)[0];
+        if (this.activeComponent.zipcode == zipcode)
+            this.activeComponent = this.tabs.filter(tab => tab.zipcode !== zipcode)[0];
     }
 }

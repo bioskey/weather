@@ -20,7 +20,8 @@ export class WeatherService {
 
   addCurrentConditions(zipcode: string): void {
     // Try to get data from localstorage
-    let data = this.storageService.getItem(zipcode + '-data');
+    let data: CurrentConditions = JSON.parse(this.storageService.getItem(zipcode + '-data'));
+
     if (data) {
       this.currentConditions.update(conditions => {
         return this.searchZipcode(zipcode, conditions) ? conditions : [...conditions, { zip: zipcode, data }]
@@ -46,7 +47,7 @@ export class WeatherService {
   // Remove zipcode from localstorage when 404 not found
   handleError(err: HttpErrorResponse, zipcode: string) {
     if (err.error.cod == 404) {
-      let locations = this.storageService.getItem(LOCATIONS);
+      let locations: string[] = JSON.parse(this.storageService.getItem(LOCATIONS));
       let index = locations ? locations.indexOf(zipcode) : -1;
 
       if (index !== -1) {
@@ -77,7 +78,7 @@ export class WeatherService {
 
   getForecast(zipcode: string): Observable<Forecast> {
     // Try to get data from localstorage
-    let data = this.storageService.getItem(zipcode + '-forecast');
+    let data: Forecast = JSON.parse(this.storageService.getItem(zipcode + '-forecast'));
 
     // Avoid http call when data is loaded from localstorage
     return data ? of(data) : this.http.get<Forecast>(`${WeatherService.URL}/forecast/daily?zip=${zipcode},us&units=imperial&cnt=5&APPID=${WeatherService.APPID}`);

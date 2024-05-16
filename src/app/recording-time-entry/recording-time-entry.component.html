@@ -1,0 +1,18 @@
+<div class="well">
+    <h3>Set recording time</h3>
+    <input type="number" #record placeholder="Recording time" name="record" min="0" class="form-control">
+    <br>
+    <select name="unit" id="unit" class="form-control" [(ngModel)]="unit">
+        <option value="sec">Second</option>
+        <option value="min">Minute</option>
+        <option value="hour">Hour</option>
+    </select>
+    <br>
+    <button class="btn btn-primary" (click)="setTime(record.value)">
+        Send
+    </button>
+    <ng-container *ngIf="isSaved">
+        <br><br>
+        <span>Recording time is saved !</span>
+    </ng-container>
+</div>

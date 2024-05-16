@@ -2,10 +2,10 @@ import { Component, Input, TemplateRef } from '@angular/core';
 
 @Component({
     selector: 'app-tab-item',
-    templateUrl: './tab-item.component.html',
+    template: ''
 })
 export class TabItemComponent {
     @Input() tabName: string;
     @Input() zipcode: string;
-    @Input() contentRef: TemplateRef<any>;
+    @Input() contentRef: TemplateRef<Element>;
 }
